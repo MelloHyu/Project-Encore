@@ -13,7 +13,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float maxSpeed = 5f;
     [SerializeField] private float playerheight = 1.6f;
+    [SerializeField] private float gravityMultiplier = 13f; // Gravity multiplier for falling speed
+    [SerializeField] private float lowJumpMultiplier = 2f; // Multiplier for low jump speed
+
     private Vector3 forceDirection = Vector3.zero;
+
+    // Coyote time variables
+    [SerializeField] private float coyoteTime = 0.15f; // Duration of coyote time in seconds
+    private float lastGroundedTime;
+
+    // Jump buffer variables
+    [SerializeField] private float jumpBufferTime = 0.15f; // Duration to buffer jump input
+    private float lastJumpInputTime = -10f;
+
+    //jump variables
+    private bool isJumpHeld = false;
 
     //camera variables
     [SerializeField] private Camera playerCamera;
@@ -31,15 +45,19 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         InputManager.instance.PlayerActions.Player.Jump.performed += Jump_performed;
+        InputManager.instance.PlayerActions.Player.Jump.canceled += Jump_canceled;
         moveAction = InputManager.instance.PlayerActions.Player.Move;
 
         Debug.Log(InputManager.instance.PlayerActions);
     }
 
+   
+
     // To Enable and Disable the input actions
     private void OnDisable()
     {
         InputManager.instance.PlayerActions.Player.Jump.performed -= Jump_performed;
+        InputManager.instance.PlayerActions.Player.Jump.canceled -= Jump_canceled;
     }
 
     private void FixedUpdate()
@@ -54,7 +72,13 @@ public class PlayerController : MonoBehaviour
         if (rb.linearVelocity.y < 0f)
         {
             // Apply gravity to the player while falling making it snappier
-            rb.linearVelocity -= Vector3.down * Physics.gravity.y * Time.fixedDeltaTime * 2f;
+            rb.linearVelocity -= gravityMultiplier * Physics.gravity.y * Time.fixedDeltaTime * Vector3.down;
+        }
+
+        if(rb.linearVelocity.y > 0f && !isJumpHeld)
+        {
+            // Apply low jump multiplier if the player is not holding the jump button
+            rb.linearVelocity -= lowJumpMultiplier * Physics.gravity.y * Time.fixedDeltaTime * Vector3.down;
         }
 
         Vector3 horizontalVelocity = rb.linearVelocity;
@@ -63,6 +87,19 @@ public class PlayerController : MonoBehaviour
         {
             //set the velocity to max speed if exceeding it
             rb.linearVelocity = horizontalVelocity.normalized * maxSpeed + Vector3.up * rb.linearVelocity.y;
+        }
+
+        // Track last grounded time for coyote time
+        if (isGrounded())
+        {
+            lastGroundedTime = Time.time;
+
+            // Jump buffering: if jump was pressed recently, perform jump
+            if (Time.time - lastJumpInputTime <= jumpBufferTime)
+            {
+                forceDirection += Vector3.up * jumpForce;
+                lastJumpInputTime = -10f; // Reset buffer so jump only happens once
+            }
         }
 
         LookAt(); // Call the LookAt method to rotate the player towards the movement direction
@@ -103,10 +140,21 @@ public class PlayerController : MonoBehaviour
     // Action to perform when the player presses the jump button
     private void Jump_performed(InputAction.CallbackContext obj)
     {
-        if (isGrounded())
+        isJumpHeld = true;
+        lastJumpInputTime = Time.time;
+
+        if (isGrounded() || (Time.time - lastGroundedTime <= coyoteTime))
         {
             forceDirection += Vector3.up * jumpForce;
+
+            lastJumpInputTime = -10f; // Reset buffer so jump only happens once
         }
+    }
+
+    // Action to perform when the player releases the jump button
+    private void Jump_canceled(InputAction.CallbackContext obj)
+    {
+        isJumpHeld = false;
     }
 
     private bool isGrounded()
