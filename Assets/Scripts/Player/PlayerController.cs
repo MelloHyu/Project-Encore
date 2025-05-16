@@ -31,7 +31,6 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         InputManager.instance.PlayerActions.Player.Jump.performed += Jump_performed;
-        InputManager.instance.PlayerActions.Player.Interact.performed += perspectiveChange;
         moveAction = InputManager.instance.PlayerActions.Player.Move;
 
         Debug.Log(InputManager.instance.PlayerActions);
@@ -41,7 +40,6 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         InputManager.instance.PlayerActions.Player.Jump.performed -= Jump_performed;
-        InputManager.instance.PlayerActions.Player.Interact.performed -= perspectiveChange;
     }
 
     private void FixedUpdate()
@@ -122,20 +120,6 @@ public class PlayerController : MonoBehaviour
         else
         {
             return false;
-        }
-    }
-
-    //Function to store the last position of the player in 3D perspective before switch
-    void perspectiveChange(InputAction.CallbackContext context)
-    {
-        if (PerspectiveStateManager.instance.getPerspectiveState())
-        {
-            currZposition = transform.position.z; // Store the current Z position of the player
-            transform.position = new Vector3(transform.position.x, transform.position.y, iniZposition); 
-        }
-        else
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y, currZposition); // Move the player in 2D perspective
         }
     }
 }
