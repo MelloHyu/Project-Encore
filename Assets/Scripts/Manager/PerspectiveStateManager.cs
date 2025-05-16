@@ -7,7 +7,7 @@ public class PerspectiveStateManager : MonoBehaviour
 {
     public static PerspectiveStateManager instance; // Singleton to be used in other scripts
     [SerializeField] Transform player; // Player object
-    [SerializeField] int groundLayer; // Layer mask for ground detection
+    [SerializeField] LayerMask groundLayer; // Layer mask for ground detection
     [SerializeField] GameObject Level2D; // Level object for 2D perspective
     [SerializeField] CinemachineCamera perspectiveCam, orthoCam; // Camera objects for 2D and 3D perspectives
 
@@ -77,21 +77,34 @@ public class PerspectiveStateManager : MonoBehaviour
     //Function to store the last position of the player in 3D perspective before switch
     void perspectiveChange(InputAction.CallbackContext context)
     {
-        if (PerspectiveStateManager.instance.getPerspectiveState())
+        if (!getPerspectiveState())
         {
             currZposition = player.transform.position.z; // Store the current Z position of the player
-            player.transform.position = new Vector3(transform.position.x, transform.position.y, iniZposition);
+            player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, iniZposition);
         }
         else
         {
             RaycastHit hit;
-            Ray ray = new Ray(player.transform.position + Vector3.forward * 1f, Vector3.forward);
+            int flag = 0; // Flag to check if the raycast hit the ground
 
-            if (Physics.Raycast(ray, out hit, 10f, groundLayer)) //Casts a ray to find the 3D equivalent of the 2D tile
+            for(int i = 1; i <= 3; i++)
             {
-                currZposition = hit.point.z; // Store the current Z position of the player
+                Ray ray = new Ray(player.transform.position - new Vector3(0, .75f + i * .1f, 0) + Vector3.forward * 1f, Vector3.forward);
+                Debug.DrawRay(player.transform.position - new Vector3(0, .75f + i * .1f, 0), Vector3.forward * 10f, Color.red, 100.0f, false);
+
+                if (Physics.Raycast(ray, out hit, 20f, (int)groundLayer)) //Casts a ray to find the 3D equivalent of the 2D tile
+                {
+                    currZposition = hit.point.z + .25f; // Store the current Z position of the player
+                    player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, currZposition); // Move the player in 2D perspective
+                    flag = 1;
+                    break;
+                }
             }
-            player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, currZposition); // Move the player in 2D perspective
+
+            if(flag == 0)
+            {
+                player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, iniZposition);
+            }
         }
     }
 }

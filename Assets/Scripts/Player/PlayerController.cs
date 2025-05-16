@@ -113,7 +113,8 @@ public class PlayerController : MonoBehaviour
     {
         // Check if the player is grounded using a raycast
         Ray ray = new Ray(transform.position + Vector3.up * 0.25f, Vector3.down);
-        if (Physics.Raycast(ray, out RaycastHit hit, playerheight))
+
+        if (Physics.Raycast(ray, out _, playerheight))
         {
             return true;
         }
