@@ -1,59 +1,59 @@
 using UnityEngine;
-using UnityEngine.InputSystem; 
+using UnityEngine.InputSystem;
+
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     //Input fields
-    private InputSystem_Actions playerActions;
     private InputAction moveAction;
 
     //movement variables
     private Rigidbody rb;
-    [SerializeField]
-    private float movementForce = 1f;
-    [SerializeField]
-    private float jumpForce = 5f;
-    [SerializeField]
-    private float maxSpeed = 5f;
-    [SerializeField]
-    private float playerheight = 1.6f;
+    [SerializeField] private float movementForce = 1f;
+    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float maxSpeed = 5f;
+    [SerializeField] private float playerheight = 1.6f;
     private Vector3 forceDirection = Vector3.zero;
 
     //camera variables
-    [SerializeField]
-    private Camera playerCamera;
+    [SerializeField] private Camera playerCamera;
+
+    float iniZposition, currZposition; //To store the initial Z position of the player
 
     //inilialize the fields
     private void Awake()
     {
-        playerActions = new InputSystem_Actions();
-        rb = this.GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
+        iniZposition = transform.position.z; // Store the initial Z position of the player
     }
 
     // To Enable and Disable the input actions
     private void OnEnable()
     {
-        playerActions.Enable();
-        playerActions.Player.Jump.performed += Jump_performed;
-        moveAction = playerActions.Player.Move;
-       
+        InputManager.instance.PlayerActions.Player.Jump.performed += Jump_performed;
+        InputManager.instance.PlayerActions.Player.Interact.performed += perspectiveChange;
+        moveAction = InputManager.instance.PlayerActions.Player.Move;
+
+        Debug.Log(InputManager.instance.PlayerActions);
     }
 
     // To Enable and Disable the input actions
     private void OnDisable()
     {
-        playerActions.Disable();
-        playerActions.Player.Jump.performed -= Jump_performed;
+        InputManager.instance.PlayerActions.Player.Jump.performed -= Jump_performed;
+        InputManager.instance.PlayerActions.Player.Interact.performed -= perspectiveChange;
     }
 
     private void FixedUpdate()
     {
         forceDirection += moveAction.ReadValue<Vector2>().x * GetCameraRight(playerCamera) * movementForce;
-        forceDirection += moveAction.ReadValue<Vector2>().y * GetCameraForward(playerCamera) * movementForce;
+        if (PerspectiveStateManager.instance.getPerspectiveState()) forceDirection += moveAction.ReadValue<Vector2>().y * GetCameraForward(playerCamera) * movementForce;
+        else transform.position = new Vector3(transform.position.x, transform.position.y, iniZposition); // Move the player in 2D perspective
 
         rb.AddForce(forceDirection, ForceMode.Impulse);
         forceDirection = Vector3.zero; // Reset force direction after applying it
 
-        if(rb.linearVelocity.y < 0f)
+        if (rb.linearVelocity.y < 0f)
         {
             // Apply gravity to the player while falling making it snappier
             rb.linearVelocity -= Vector3.down * Physics.gravity.y * Time.fixedDeltaTime * 2f;
@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
         Vector3 direction = rb.linearVelocity;
         direction.y = 0; // Ignore vertical component
 
-        if(moveAction.ReadValue<Vector2>().sqrMagnitude > 0.01f && direction.sqrMagnitude > 0.01f)
+        if (moveAction.ReadValue<Vector2>().sqrMagnitude > 0.01f && direction.sqrMagnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
     // Action to perform when the player presses the jump button
     private void Jump_performed(InputAction.CallbackContext obj)
     {
-        if(isGrounded())
+        if (isGrounded())
         {
             forceDirection += Vector3.up * jumpForce;
         }
@@ -114,8 +114,8 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded()
     {
         // Check if the player is grounded using a raycast
-        Ray ray = new Ray(transform.position + Vector3.up * 0.25f, Vector3.down); 
-        if(Physics.Raycast(ray, out RaycastHit hit, playerheight))
+        Ray ray = new Ray(transform.position + Vector3.up * 0.25f, Vector3.down);
+        if (Physics.Raycast(ray, out RaycastHit hit, playerheight))
         {
             return true;
         }
@@ -125,4 +125,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //Function to store the last position of the player in 3D perspective before switch
+    void perspectiveChange(InputAction.CallbackContext context)
+    {
+        if (PerspectiveStateManager.instance.getPerspectiveState())
+        {
+            currZposition = transform.position.z; // Store the current Z position of the player
+            transform.position = new Vector3(transform.position.x, transform.position.y, iniZposition); 
+        }
+        else
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, currZposition); // Move the player in 2D perspective
+        }
+    }
 }
