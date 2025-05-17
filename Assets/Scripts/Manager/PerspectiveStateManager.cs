@@ -8,7 +8,7 @@ public class PerspectiveStateManager : MonoBehaviour
     public static PerspectiveStateManager instance; // Singleton to be used in other scripts
     [SerializeField] Transform player; // Player object
     [SerializeField] LayerMask groundLayer; // Layer mask for ground detection
-    [SerializeField] GameObject Level2D; // Level object for 2D perspective
+    [SerializeField] GameObject Level2D, Level3D; // Level object for 2D perspective
     [SerializeField] CinemachineCamera perspectiveCam, orthoCam; // Camera objects for 2D and 3D perspectives
 
     bool is3D = false;
@@ -24,12 +24,14 @@ public class PerspectiveStateManager : MonoBehaviour
             orthoCam.Priority = 0; // Disable 2D camera
             perspectiveCam.Priority = 10; // Enable 3D camera
             Level2D.SetActive(false); // Disable 2D Level
+            Level3D.SetActive(true); // Enable 3D Level
         }
         else
         {
             orthoCam.Priority = 10; // Enable 2D camera
             perspectiveCam.Priority = 0; // Disable 3D camera
             Level2D.SetActive(true); // Enable 2D Level
+            Level3D.SetActive(false); // Disable 3D Level
         }
     }
 
@@ -59,12 +61,14 @@ public class PerspectiveStateManager : MonoBehaviour
             orthoCam.Priority = 0; // Disable 2D camera
             perspectiveCam.Priority = 10; // Enable 3D camera
             Level2D.SetActive(false); // Disable 2D Level
+            Level3D.SetActive(true); // Enable 3D Level
         }
         else
         {
             orthoCam.Priority = 10; // Enable 2D camera
             perspectiveCam.Priority = 0; // Disable 3D camera
             Level2D.SetActive(true); // Enable 2D Level
+            Level3D.SetActive(false); // Disable 3D Level
         }
     }
 
@@ -87,21 +91,29 @@ public class PerspectiveStateManager : MonoBehaviour
             RaycastHit hit;
             int flag = 0; // Flag to check if the raycast hit the ground
 
-            for(int i = 1; i <= 3; i++)
+            if(!Physics.Raycast(player.transform.position, Vector3.down, out _, 4f, (int)groundLayer)) //Checks if player is already grounded
             {
-                Ray ray = new Ray(player.transform.position - new Vector3(0, .75f + i * .1f, 0) + Vector3.forward * 1f, Vector3.forward);
-                Debug.DrawRay(player.transform.position - new Vector3(0, .75f + i * .1f, 0), Vector3.forward * 10f, Color.red, 100.0f, false);
-
-                if (Physics.Raycast(ray, out hit, 20f, (int)groundLayer)) //Casts a ray to find the 3D equivalent of the 2D tile
+                for (int j = -1; j < 2; j++)
                 {
-                    currZposition = hit.point.z + .45f; // Store the current Z position of the player
-                    player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, currZposition); // Move the player in 2D perspective
-                    flag = 1;
-                    break;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Vector3 offset = new Vector3(j * .2f, 2f + i * .2f, 0); // Offset to cast multiple rays
+
+                        Ray ray = new Ray(player.transform.position - offset + Vector3.forward * 1f, Vector3.forward);
+                        Debug.DrawRay(player.transform.position - offset, Vector3.forward * 10f, Color.red, 100.0f, true);
+
+                        if (Physics.Raycast(ray, out hit, 20f, (int)groundLayer)) //Casts a ray to find the 3D equivalent of the 2D tile
+                        {
+                            currZposition = hit.point.z + .45f; // Store the current Z position of the player
+                            player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, currZposition); // Move the player in 2D perspective
+                            flag = 1;
+                            break;
+                        }
+                    }
                 }
             }
 
-            if(flag == 0)
+            if (flag == 0)
             {
                 player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, iniZposition);
             }

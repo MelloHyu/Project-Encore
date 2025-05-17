@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
 
     // Jump buffer variables
     [SerializeField] private float jumpBufferTime = 0.15f; // Duration to buffer jump input
-    private float lastJumpInputTime = -10f;
+    private float lastJumpInputTime = -10f, iniZposition = 0f;
 
     //jump variables
     private bool isJumpHeld = false;
@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        iniZposition = transform.position.z; // Store the initial Z position of the player
     }
 
     // To Enable and Disable the input actions
@@ -72,7 +73,7 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity -= gravityMultiplier * Physics.gravity.y * Time.fixedDeltaTime * Vector3.down;
         }
 
-        if(rb.linearVelocity.y > 0f && !isJumpHeld)
+        if (rb.linearVelocity.y > 0f && !isJumpHeld)
         {
             // Apply low jump multiplier if the player is not holding the jump button
             rb.linearVelocity -= lowJumpMultiplier * Physics.gravity.y * Time.fixedDeltaTime * Vector3.down;
@@ -107,9 +108,14 @@ public class PlayerController : MonoBehaviour
         Vector3 direction = rb.linearVelocity;
         direction.y = 0; // Ignore vertical component
 
-        if (moveAction.ReadValue<Vector2>().sqrMagnitude > 0.01f && direction.sqrMagnitude > 0.01f)
+        if (moveAction.ReadValue<Vector2>().x > 0.01f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
+        else if (moveAction.ReadValue<Vector2>().x < -0.01f)
+        {
+            Quaternion targetRotation = Quaternion.Euler(0, 180, 0);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
         else
