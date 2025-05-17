@@ -94,7 +94,7 @@ public class PerspectiveStateManager : MonoBehaviour
 
                 if (Physics.Raycast(ray, out hit, 20f, (int)groundLayer)) //Casts a ray to find the 3D equivalent of the 2D tile
                 {
-                    currZposition = hit.point.z + .25f; // Store the current Z position of the player
+                    currZposition = hit.point.z + .45f; // Store the current Z position of the player
                     player.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, currZposition); // Move the player in 2D perspective
                     flag = 1;
                     break;

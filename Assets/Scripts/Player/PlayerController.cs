@@ -18,13 +18,10 @@ public class PlayerController : MonoBehaviour
     //camera variables
     [SerializeField] private Camera playerCamera;
 
-    float iniZposition, currZposition; //To store the initial Z position of the player
-
     //inilialize the fields
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        iniZposition = transform.position.z; // Store the initial Z position of the player
     }
 
     // To Enable and Disable the input actions
