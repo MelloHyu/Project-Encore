@@ -9712,49 +9712,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4344411740268661191, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
-      propertyPath: m_Drag
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4484865155085854421, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
-      propertyPath: maxSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4484865155085854421, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
-      propertyPath: jumpForce
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 4484865155085854421, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
-      propertyPath: coyoteTime
-      value: 0.12
-      objectReference: {fileID: 0}
     - target: {fileID: 4484865155085854421, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 8426549905138354655}
-    - target: {fileID: 4484865155085854421, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
-      propertyPath: movementForce
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4484865155085854421, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
-      propertyPath: gravityMultiplier
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4484865155085854421, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
-      propertyPath: lowJumpMultiplier
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 5303374209896383769, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 99579157cce7fca4bb2145de9681cdae, type: 2}
     - target: {fileID: 6828949523436354224, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 6828949523436354224, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
