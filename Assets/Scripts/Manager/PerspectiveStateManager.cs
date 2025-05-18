@@ -16,7 +16,11 @@ public class PerspectiveStateManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null) instance = this;
+        if (instance == null)
+        {
+            instance = this;
+            
+        }
         else Destroy(gameObject); // Destroy duplicate instances
 
         if (is3D)
@@ -46,8 +50,10 @@ public class PerspectiveStateManager : MonoBehaviour
 
     void OnDisable()
     {
+        
         InputManager.instance.PlayerActions.Player.Interact.performed -= changePerspective;
         InputManager.instance.PlayerActions.Player.Interact.performed -= perspectiveChange;
+        InputManager.instance.PlayerActions.Disable();
     }
 
     void changePerspective(InputAction.CallbackContext context)
