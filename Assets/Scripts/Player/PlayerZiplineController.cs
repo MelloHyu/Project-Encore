@@ -1,9 +1,16 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerZiplineController : MonoBehaviour
 {
     [SerializeField] private float checkOffset = 1f; // Offset for the raycast check
     [SerializeField] private float checkRadius = 2f;
+    AnimationController animationController;
+
+    void Awake()
+    {
+        animationController = GetComponent<AnimationController>();
+    }
 
     private void OnEnable()
     {
@@ -17,12 +24,17 @@ public class PlayerZiplineController : MonoBehaviour
 
     private void Zipline_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        RaycastHit[] hits = Physics.SphereCastAll(transform.position + new Vector3(0,checkOffset,0), checkRadius, Vector3.up);
-        foreach (RaycastHit hit in hits)
+        if (PerspectiveStateManager.instance.getPerspectiveState()) //Only allow player to use the zipline in 3D
         {
-            if (hit.collider.tag == "Zipline")
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position + new Vector3(0, checkOffset, 0), checkRadius, Vector3.up);
+            foreach (RaycastHit hit in hits)
             {
-                hit.collider.GetComponent<Zipline>().StartZipline(gameObject);
+                if (hit.collider.tag == "Zipline")
+                {
+                    hit.collider.GetComponent<Zipline>().StartZipline(gameObject);
+                    List<Vector3> extremePoints = hit.collider.GetComponent<Zipline>().getPoints();
+                    animationController.ziplineAnimation(extremePoints[0], extremePoints[1]);
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
@@ -45,8 +46,6 @@ public class PlayerController : MonoBehaviour
         InputManager.instance.PlayerActions.Player.Jump.performed += Jump_performed;
         InputManager.instance.PlayerActions.Player.Jump.canceled += Jump_canceled;
         moveAction = InputManager.instance.PlayerActions.Player.Move;
-
-        Debug.Log(InputManager.instance.PlayerActions);
     }
 
    
@@ -110,13 +109,11 @@ public class PlayerController : MonoBehaviour
 
         if (moveAction.ReadValue<Vector2>().x > 0.01f)
         {
-            Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            transform.DORotate(new Vector3(0, 0, 0), 0.15f); // Rotate to face right
         }
         else if (moveAction.ReadValue<Vector2>().x < -0.01f)
         {
-            Quaternion targetRotation = Quaternion.Euler(0, 180, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            transform.DORotate(new Vector3(0, 180, 0), 0.15f); // Rotate to face left
         }
         else
         {

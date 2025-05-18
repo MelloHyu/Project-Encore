@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Zipline : MonoBehaviour
@@ -9,7 +10,7 @@ public class Zipline : MonoBehaviour
     [SerializeField] private LineRenderer cable;
     [SerializeField] private float yOffsetCable = 0.5f; // Offset for the cable line renderer
 
-    public Transform zipTransform; 
+    public Transform zipTransform;
 
     private bool isZipping = false;
     private GameObject localZip;
@@ -22,10 +23,10 @@ public class Zipline : MonoBehaviour
 
     private void Update()
     {
-        if(!isZipping || localZip == null) return;
+        if (!isZipping || localZip == null) return;
         localZip.GetComponent<Rigidbody>().AddForce((targetZipline.zipTransform.position - zipTransform.position).normalized * zipSpeed * Time.deltaTime, ForceMode.Acceleration);
 
-        if(Vector3.Distance(localZip.transform.position, targetZipline.zipTransform.position) <= arrivalThreshold)
+        if (Vector3.Distance(localZip.transform.position, targetZipline.zipTransform.position) <= arrivalThreshold)
         {
             ResetZipline();
         }
@@ -33,29 +34,28 @@ public class Zipline : MonoBehaviour
 
     public void StartZipline(GameObject player)
     {
-        if(isZipping) return;
+        if (isZipping) return;
 
         localZip = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         localZip.transform.position = zipTransform.position;
-        localZip.transform.localScale = new Vector3(zipScale,zipScale,zipScale);
+        localZip.transform.localScale = new Vector3(zipScale, zipScale, zipScale);
         localZip.AddComponent<Rigidbody>().useGravity = false;
         localZip.GetComponent<Collider>().isTrigger = true;
+        localZip.GetComponent<MeshRenderer>().enabled = false;
 
         player.GetComponent<Rigidbody>().useGravity = false;
         player.GetComponent<Rigidbody>().isKinematic = true;
-        player.transform.position = zipTransform.position - new Vector3(0,yOffsetCable,0);
+        player.transform.position = zipTransform.position - new Vector3(0, yOffsetCable, 0);
         player.GetComponent<PlayerController>().enabled = false;
 
         player.transform.parent = localZip.transform;
 
         isZipping = true;
-
-
     }
 
     private void ResetZipline()
     {
-        if(!isZipping) return;
+        if (!isZipping) return;
 
         GameObject player = localZip.transform.GetChild(0).gameObject;
         player.GetComponent<Rigidbody>().useGravity = true;
@@ -68,5 +68,10 @@ public class Zipline : MonoBehaviour
         localZip = null;
         isZipping = false;
         Debug.Log("Resetting zipline");
+    }
+
+    public List<Vector3> getPoints()
+    {
+        return new List<Vector3> { zipTransform.position, targetZipline.zipTransform.position };
     }
 }
