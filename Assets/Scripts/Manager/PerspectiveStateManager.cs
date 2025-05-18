@@ -23,6 +23,7 @@ public class PerspectiveStateManager : MonoBehaviour
         }
         else Destroy(gameObject); // Destroy duplicate instances
 
+
         if (is3D)
         {
             orthoCam.Priority = 0; // Disable 2D camera
