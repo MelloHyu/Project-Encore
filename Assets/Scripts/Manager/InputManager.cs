@@ -10,7 +10,6 @@ public class InputManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); //keep this object even on reload
             PlayerActions = new InputSystem_Actions(); //Create a new input action instance
         }
         else
