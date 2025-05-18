@@ -10103,6 +10103,10 @@ PrefabInstance:
       propertyPath: m_Height
       value: 3.1
       objectReference: {fileID: 0}
+    - target: {fileID: 4344411740268661191, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
+      propertyPath: m_Drag
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 4484865155085854421, guid: 850971519c6766b4689613fcf3a4faed, type: 3}
       propertyPath: playerCamera
       value: 
