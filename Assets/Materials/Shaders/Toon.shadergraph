@@ -1441,8 +1441,8 @@
     "m_ObjectId": "20a837950e244da08bbef78a6e150067",
     "m_Title": "Outline",
     "m_Position": {
-        "x": -1983.999755859375,
-        "y": -70.66656494140625
+        "x": -1984.0,
+        "y": -70.66668701171875
     }
 }
 
@@ -3375,8 +3375,8 @@
     "m_ObjectId": "7c91cd5c5dd04250ba1663a9cf2bef04",
     "m_Title": "Color and Texture",
     "m_Position": {
-        "x": -3483.999755859375,
-        "y": 211.33331298828126
+        "x": -3484.0,
+        "y": 211.3333282470703
     }
 }
 
@@ -3853,7 +3853,7 @@
     "m_CustomColors": {
         "m_SerializableColors": []
     },
-    "m_Space": 4,
+    "m_Space": 2,
     "m_PositionSource": 0
 }
 
