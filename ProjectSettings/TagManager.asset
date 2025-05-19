@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - Zipline
+  - 2D
+  - 3D
+  - PerspectiveCam
+  - OrthoCam
   layers:
   - Default
   - TransparentFX
