@@ -17,9 +17,12 @@ public class TimerBlock : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!isFalling && collision.gameObject.CompareTag("Player"))
+        if(GameManager.GameState == 1)
         {
-            StartCoroutine(FallAndDestroy());
+            if (!isFalling && collision.gameObject.CompareTag("Player"))
+            {
+                StartCoroutine(FallAndDestroy());
+            }
         }
     }
 

@@ -23,12 +23,15 @@ public class Zipline : MonoBehaviour
 
     private void Update()
     {
-        if (!isZipping || localZip == null) return;
-        localZip.GetComponent<Rigidbody>().AddForce((targetZipline.zipTransform.position - zipTransform.position).normalized * zipSpeed * Time.deltaTime, ForceMode.Acceleration);
-
-        if (Vector3.Distance(localZip.transform.position, targetZipline.zipTransform.position) <= arrivalThreshold)
+        if(GameManager.GameState == 1)
         {
-            ResetZipline();
+            if (!isZipping || localZip == null) return;
+            localZip.GetComponent<Rigidbody>().AddForce((targetZipline.zipTransform.position - zipTransform.position).normalized * zipSpeed * Time.deltaTime, ForceMode.Acceleration);
+
+            if (Vector3.Distance(localZip.transform.position, targetZipline.zipTransform.position) <= arrivalThreshold)
+            {
+                ResetZipline();
+            }
         }
     }
 
