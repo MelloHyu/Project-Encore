@@ -60,7 +60,15 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         forceDirection += moveAction.ReadValue<Vector2>().x * GetCameraRight(playerCamera) * movementForce;
-        if (PerspectiveStateManager.instance.getPerspectiveState()) forceDirection += moveAction.ReadValue<Vector2>().y * GetCameraForward(playerCamera) * movementForce;
+        if(forceDirection != Vector3.zero)
+        {
+            SoundManager.Instance.PlaySoundWalk();
+        }
+        else
+        {
+            SoundManager.Instance.StopSoundWalk(); // Stop the walking sound if not moving
+        }
+            if (PerspectiveStateManager.instance.getPerspectiveState()) forceDirection += moveAction.ReadValue<Vector2>().y * GetCameraForward(playerCamera) * movementForce;
         else transform.position = new Vector3(transform.position.x, transform.position.y, iniZposition); // Move the player in 2D perspective
 
         rb.AddForce(forceDirection, ForceMode.Impulse);
@@ -140,13 +148,14 @@ public class PlayerController : MonoBehaviour
     // Action to perform when the player presses the jump button
     private void Jump_performed(InputAction.CallbackContext obj)
     {
+        
         isJumpHeld = true;
         lastJumpInputTime = Time.time;
 
         if (isGrounded() || (Time.time - lastGroundedTime <= coyoteTime))
         {
             forceDirection += Vector3.up * jumpForce;
-
+            SoundManager.Instance.PlaySound(SoundManager.Instance.jumpSound); // Play jump sound
             lastJumpInputTime = -10f; // Reset buffer so jump only happens once
         }
     }
