@@ -1,8 +1,8 @@
 using UnityEngine;
-using TMPro;
+using TMPro; 
 public class Timer : MonoBehaviour
 {
-    private float LowestScore = 100000f; // Total time duration in seconds
+    private float LowestScore = 999999999f; // Total time duration in seconds
 
     private float timer;
 
@@ -11,7 +11,7 @@ public class Timer : MonoBehaviour
 
     private void Start()
     {
-        LowestScore = PlayerPrefs.GetInt("LowestScore", 100000); // Load the lowest score from PlayerPrefs, default to a high value
+        LowestScore = PlayerPrefs.GetInt("LowestScore", 999999999); // Load the lowest score from PlayerPrefs, default to a high value
         UpdateTimerText(lowestScoreText, LowestScore); // Update the text with the lowest score
         timer = 0f; // Initialize the timer with the total duration
         UpdateTimerText(timerText, timer); // Update the text at the start
@@ -19,11 +19,8 @@ public class Timer : MonoBehaviour
 
     private void Update()
     {
-        if(GameManager.GameState == 1) // Check if the game is in the active state
-        {
-            timer += Time.deltaTime;
-            UpdateTimerText(timerText, timer);
-        }
+        timer += Time.deltaTime;
+        UpdateTimerText(timerText,timer);
     }
 
     private void UpdateTimerText(TextMeshProUGUI textBox, float timer)
