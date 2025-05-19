@@ -91,4 +91,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1; // Start the game
         GameState = 1; // Set game state to 1
     }
+
+
+
+
 }
