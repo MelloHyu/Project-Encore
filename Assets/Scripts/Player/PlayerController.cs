@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
         moveAction = InputManager.instance.PlayerActions.Player.Move;
     }
 
-   
+
 
     // To Enable and Disable the input actions
     private void OnDisable()
@@ -59,47 +59,50 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        forceDirection += moveAction.ReadValue<Vector2>().x * GetCameraRight(playerCamera) * movementForce;
-        if (PerspectiveStateManager.instance.getPerspectiveState()) forceDirection += moveAction.ReadValue<Vector2>().y * GetCameraForward(playerCamera) * movementForce;
-        else transform.position = new Vector3(transform.position.x, transform.position.y, iniZposition); // Move the player in 2D perspective
-
-        rb.AddForce(forceDirection, ForceMode.Impulse);
-        forceDirection = Vector3.zero; // Reset force direction after applying it
-
-        if (rb.linearVelocity.y < 0f)
+        if (GameManager.GameState == 1)
         {
-            // Apply gravity to the player while falling making it snappier
-            rb.linearVelocity -= gravityMultiplier * Physics.gravity.y * Time.fixedDeltaTime * Vector3.down;
-        }
+            forceDirection += moveAction.ReadValue<Vector2>().x * GetCameraRight(playerCamera) * movementForce;
+            if (PerspectiveStateManager.instance.getPerspectiveState()) forceDirection += moveAction.ReadValue<Vector2>().y * GetCameraForward(playerCamera) * movementForce;
+            else transform.position = new Vector3(transform.position.x, transform.position.y, iniZposition); // Move the player in 2D perspective
 
-        if (rb.linearVelocity.y > 0f && !isJumpHeld)
-        {
-            // Apply low jump multiplier if the player is not holding the jump button
-            rb.linearVelocity -= lowJumpMultiplier * Physics.gravity.y * Time.fixedDeltaTime * Vector3.down;
-        }
+            rb.AddForce(forceDirection, ForceMode.Impulse);
+            forceDirection = Vector3.zero; // Reset force direction after applying it
 
-        Vector3 horizontalVelocity = rb.linearVelocity;
-        horizontalVelocity.y = 0f; // Ignore vertical component
-        if (horizontalVelocity.sqrMagnitude > maxSpeed * maxSpeed)
-        {
-            //set the velocity to max speed if exceeding it
-            rb.linearVelocity = horizontalVelocity.normalized * maxSpeed + Vector3.up * rb.linearVelocity.y;
-        }
-
-        // Track last grounded time for coyote time
-        if (isGrounded())
-        {
-            lastGroundedTime = Time.time;
-
-            // Jump buffering: if jump was pressed recently, perform jump
-            if (Time.time - lastJumpInputTime <= jumpBufferTime)
+            if (rb.linearVelocity.y < 0f)
             {
-                forceDirection += Vector3.up * jumpForce;
-                lastJumpInputTime = -10f; // Reset buffer so jump only happens once
+                // Apply gravity to the player while falling making it snappier
+                rb.linearVelocity -= gravityMultiplier * Physics.gravity.y * Time.fixedDeltaTime * Vector3.down;
             }
-        }
 
-        LookAt(); // Call the LookAt method to rotate the player towards the movement direction
+            if (rb.linearVelocity.y > 0f && !isJumpHeld)
+            {
+                // Apply low jump multiplier if the player is not holding the jump button
+                rb.linearVelocity -= lowJumpMultiplier * Physics.gravity.y * Time.fixedDeltaTime * Vector3.down;
+            }
+
+            Vector3 horizontalVelocity = rb.linearVelocity;
+            horizontalVelocity.y = 0f; // Ignore vertical component
+            if (horizontalVelocity.sqrMagnitude > maxSpeed * maxSpeed)
+            {
+                //set the velocity to max speed if exceeding it
+                rb.linearVelocity = horizontalVelocity.normalized * maxSpeed + Vector3.up * rb.linearVelocity.y;
+            }
+
+            // Track last grounded time for coyote time
+            if (isGrounded())
+            {
+                lastGroundedTime = Time.time;
+
+                // Jump buffering: if jump was pressed recently, perform jump
+                if (Time.time - lastJumpInputTime <= jumpBufferTime)
+                {
+                    forceDirection += Vector3.up * jumpForce;
+                    lastJumpInputTime = -10f; // Reset buffer so jump only happens once
+                }
+            }
+
+            LookAt(); // Call the LookAt method to rotate the player towards the movement direction
+        }
     }
 
     private void LookAt()
@@ -140,14 +143,17 @@ public class PlayerController : MonoBehaviour
     // Action to perform when the player presses the jump button
     private void Jump_performed(InputAction.CallbackContext obj)
     {
-        isJumpHeld = true;
-        lastJumpInputTime = Time.time;
-
-        if (isGrounded() || (Time.time - lastGroundedTime <= coyoteTime))
+        if(GameManager.GameState == 1)
         {
-            forceDirection += Vector3.up * jumpForce;
+            isJumpHeld = true;
+            lastJumpInputTime = Time.time;
 
-            lastJumpInputTime = -10f; // Reset buffer so jump only happens once
+            if (isGrounded() || (Time.time - lastGroundedTime <= coyoteTime))
+            {
+                forceDirection += Vector3.up * jumpForce;
+
+                lastJumpInputTime = -10f; // Reset buffer so jump only happens once
+            }
         }
     }
 
@@ -157,7 +163,7 @@ public class PlayerController : MonoBehaviour
         isJumpHeld = false;
     }
 
-    private bool isGrounded()
+    public bool isGrounded()
     {
         // Check if the player is grounded using a raycast
         Ray ray = new Ray(transform.position + Vector3.up * 0.25f, Vector3.down);
