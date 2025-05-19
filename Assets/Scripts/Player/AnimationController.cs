@@ -51,10 +51,11 @@ public class AnimationController : MonoBehaviour
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         Debug.Log(angle);
+        Debug.Log(direction);
 
         //Rotate the player to face the direction of movement on zipline
         if (angle > 0) transform.DORotate(new Vector3(0, 180, angle), .2f);
-        else transform.DORotate(new Vector3(180, 180, 90 + angle), .2f);
+        else transform.DORotate(new Vector3(180, 180, -90 + angle), .2f);
     }
 
     void ziplineAnimationDone()
