@@ -232,6 +232,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1070575192450646927}
+  jumpAnimDuration: 0.06
+  minDist: 0.6
 --- !u!114 &5133996310164687893
 MonoBehaviour:
   m_ObjectHideFlags: 0
