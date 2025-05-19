@@ -326,5 +326,5 @@ MonoBehaviour:
   zipScale: 0.2
   arrivalThreshold: 0.5
   cable: {fileID: 7469174971973671310}
-  yOffsetCable: 0.7
+  yOffsetCable: 1.4
   zipTransform: {fileID: 8238074471626304211}

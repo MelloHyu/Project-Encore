@@ -24,19 +24,16 @@ public class PlayerZiplineController : MonoBehaviour
 
     private void Zipline_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if(GameManager.GameState == 1)
+        if (PerspectiveStateManager.instance.getPerspectiveState()) //Only allow player to use the zipline in 3D
         {
-            if (PerspectiveStateManager.instance.getPerspectiveState()) //Only allow player to use the zipline in 3D
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position + new Vector3(0, checkOffset, 0), checkRadius, Vector3.up);
+            foreach (RaycastHit hit in hits)
             {
-                RaycastHit[] hits = Physics.SphereCastAll(transform.position + new Vector3(0, checkOffset, 0), checkRadius, Vector3.up);
-                foreach (RaycastHit hit in hits)
+                if (hit.collider.tag == "Zipline")
                 {
-                    if (hit.collider.tag == "Zipline")
-                    {
-                        hit.collider.GetComponent<Zipline>().StartZipline(gameObject);
-                        List<Vector3> extremePoints = hit.collider.GetComponent<Zipline>().getPoints();
-                        animationController.ziplineAnimation(extremePoints[0], extremePoints[1]);
-                    }
+                    hit.collider.GetComponent<Zipline>().StartZipline(gameObject);
+                    List<Vector3> extremePoints = hit.collider.GetComponent<Zipline>().getPoints();
+                    animationController.ziplineAnimation(extremePoints[0], extremePoints[1]);
                 }
             }
         }
