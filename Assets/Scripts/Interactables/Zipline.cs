@@ -42,7 +42,7 @@ public class Zipline : MonoBehaviour
         localZip.AddComponent<Rigidbody>().useGravity = false;
         localZip.GetComponent<Collider>().isTrigger = true;
         localZip.GetComponent<MeshRenderer>().enabled = false;
-
+        SoundManager.Instance.PlaySoundZip();
         player.GetComponent<Rigidbody>().useGravity = false;
         player.GetComponent<Rigidbody>().isKinematic = true;
         player.transform.position = zipTransform.position - new Vector3(0, yOffsetCable, 0);
@@ -62,7 +62,7 @@ public class Zipline : MonoBehaviour
         player.GetComponent<Rigidbody>().isKinematic = false;
         player.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         player.GetComponent<PlayerController>().enabled = true;
-
+        SoundManager.Instance.StopSoundZip();
         player.transform.parent = null;
         Destroy(localZip);
         localZip = null;
