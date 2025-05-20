@@ -27,7 +27,7 @@ public class GameEnd : MonoBehaviour
     
     IEnumerator waitForEnd()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(10f);
         GameManager.instance.RestartGame();
     }
 }

@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public static int GameState { get; private set; } = 0; // Game state variable
 
     PlayableDirector director; // Reference to the PlayableDirector component
-    [SerializeField] private GameObject startGameUI; // UI element to show at the start of the game
+    [SerializeField] private GameObject startGameUI, instructionsUI, mainMenuCam; // UI element to show at the start of the game
 
     private void Awake()
     {
@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
         if (GameState == 0)
         {
             director.Play(); // Play the timeline
+            startGameUI.SetActive(false); // Hide the start game UI
         }
     }
 
@@ -54,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     void GameAfterTimeline(PlayableDirector obj)
     {
-        startGameUI.SetActive(false); // Hide the start game UI
+        mainMenuCam.SetActive(false); // Deactivate the main menu camera
         // This function is called when the timeline stops
         GameState = 1; // Set game state to 1
         Time.timeScale = 1; // Resume the game
@@ -97,7 +98,13 @@ public class GameManager : MonoBehaviour
         GameState = 1; // Set game state to 1
     }
 
+    public void openInstructions()
+    {
+        instructionsUI.SetActive(true); // Show the instructions UI
+    }
 
-
-
+    public void closeInstructions()
+    {
+        instructionsUI.SetActive(false); // Hide the instructions UI
+    }
 }
