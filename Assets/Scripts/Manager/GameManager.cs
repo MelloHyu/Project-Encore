@@ -47,6 +47,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public static void setGameState(int state)
+    {
+        GameState = state; // Set the game state
+    }
+
     void GameAfterTimeline(PlayableDirector obj)
     {
         startGameUI.SetActive(false); // Hide the start game UI

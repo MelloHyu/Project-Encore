@@ -90,7 +90,7 @@ public class PerspectiveStateManager : MonoBehaviour
     //Function to store the last position of the player in 3D perspective before switch
     void perspectiveChange(InputAction.CallbackContext context)
     {
-        if(GameManager.GameState == 1)
+        if(GameManager.GameState == 1 && player.transform.parent == null)
         {
             if (!getPerspectiveState())
             {
